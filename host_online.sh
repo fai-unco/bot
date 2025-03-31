@@ -1,4 +1,5 @@
 #!/bin/bash
+# check online host via 3 successful pings
 
 HOST_IP=$1
 PARA="355381139" #luyo
