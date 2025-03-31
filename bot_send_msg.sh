@@ -1,16 +1,35 @@
 #!/bin/bash
-#Recibe chat-id y mensaje
 
-TOKEN="1253518189:AAEgHcRAvrsOR6RTRamny2TSOV-Fi55aJFI"
-#LUYO
-#ID="355381139"
+# Cargar variables desde archivo .env
+ENV_FILE=".telegram.env"
+if [ -f "$ENV_FILE" ]; then
+    export $(grep -v '^#' "$ENV_FILE" | xargs)
+else
+    echo "No se encontró el archivo de configuración $ENV_FILE"
+    exit 1
+fi
 
-#GRUPO STIC-FI
-#ID="-357496807"
+# Validar entrada
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Uso: $0 <chat_id> <mensaje>"
+    exit 1
+fi
 
-ID=$1
-MENSAJE="<pre>$2</pre>"
+CHAT_ID="$1"
 MENSAJE="$2"
-URL="https://api.telegram.org/bot$TOKEN/sendMessage"
-#curl -s -X POST $URL -d chat_id=$ID -d text="$MENSAJE"
-curl -s -X POST $URL -d chat_id=$ID -d text="$MENSAJE" -d parse_mode=html
+URL="https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+
+# Enviar mensaje con formato HTML
+RESP=$(curl -s -X POST "$URL" \
+    -d chat_id="$CHAT_ID" \
+    -d text="$MENSAJE" \
+    -d parse_mode=html)
+
+# Validar respuesta
+OK=$(echo "$RESP" | jq -r '.ok')
+if [ "$OK" != "true" ]; then
+    echo "❌ Error al enviar mensaje. Respuesta:"
+    echo "$RESP"
+else
+    echo "✅ Mensaje enviado correctamente."
+fi
