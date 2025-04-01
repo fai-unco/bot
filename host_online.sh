@@ -2,7 +2,7 @@
 # check online host via 3 successful pings
 
 HOST_IP=$1
-PARA="355381139" #luyo
+PARA="*******" #luyo
 
 #fping -c1 -t300 $IP 2>/dev/null 1>/dev/null
 ping -c 3 $HOST_IP 2>/dev/null 1>/dev/null
